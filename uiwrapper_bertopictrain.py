@@ -1,4 +1,17 @@
-import gc
+
+"""This script provides a Streamlit-based user interface for training BERTopic models on uploaded text files. 
+It includes functionalities for uploading text files, processing the text data, selecting model parameters, 
+training the BERTopic model, and visualizing the results.
+Classes:
+    StreamlitHandler: Custom logging handler to display logs in the Streamlit app.
+Functions:
+    check_txt_files(file_paths): Reads and processes text files, returning a list of non-empty lines.
+    train_bertopic_model_from_list(data_list, model_name, selected_languages, nr_topics): Trains a BERTopic model on the provided data list and saves the model.
+    visualize_and_save(topic_model, modelname): Generates and saves visualizations for the trained BERTopic model.
+    display_visualizations(model_name): Displays saved visualizations for the specified model in the Streamlit app.
+Streamlit UI:
+    The Streamlit UI allows users to upload text files, select languages and model parameters, and train the BERTopic model. 
+    It also provides options to view the generated visualizations."""
 import streamlit as st
 import logging
 import os
@@ -6,6 +19,7 @@ from bertopic import BERTopic
 import time
 from threading import Thread
 import queue
+import gc
 
 # Configure page settings
 st.set_page_config(

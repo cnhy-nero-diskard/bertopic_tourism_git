@@ -9,6 +9,8 @@ from collections import Counter
 import webbrowser
 import os
 import gc
+import asyncio
+import threading
 
 class BERTopicUI:
     def __init__(self, root):
@@ -81,6 +83,9 @@ class BERTopicUI:
                 messagebox.showerror("Error", f"Failed to load model: {str(e)}")
     
     def run_analysis(self):
+        asyncio.run(self.async_run_analysis())
+    
+    async def async_run_analysis(self):
         if not self.topic_model:
             messagebox.showerror("Error", "Please load a model first")
             return
@@ -100,7 +105,8 @@ class BERTopicUI:
             docs = text.split('\n')
             
             # Perform topic inference
-            topics, probabilities = self.topic_model.transform(docs)
+            loop = asyncio.get_event_loop()
+            topics, probabilities = await loop.run_in_executor(None, self.topic_model.transform, docs)
             
             # Combine topics and probabilities and sort by probability in descending order
             topic_prob_pairs = sorted(zip(topics, probabilities), key=lambda x: x[1], reverse=True)
@@ -181,6 +187,9 @@ class BERTopicUI:
             messagebox.showerror("Error", f"Analysis failed: {str(e)}") 
 
     def export_visuals(self):
+        asyncio.run(self.async_export_visuals())
+    
+    async def async_export_visuals(self):
         if not self.figure:
             messagebox.showerror("Error", "No visualization available to export")
             return
